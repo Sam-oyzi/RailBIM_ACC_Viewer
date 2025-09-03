@@ -212,6 +212,21 @@ body, html {
     transition: width 0.3s ease;
 }
 
+/* Base styles for Autodesk Viewer Toolbar - No scrolling by default */
+.adsk-viewing-viewer .adsk-control-group,
+.adsk-viewing-viewer .toolbar,
+.adsk-viewing-viewer .adsk-toolbar,
+.adsk-viewing-viewer .adsk-toolbar-vertical,
+.adsk-viewing-viewer .adsk-toolbar-horizontal,
+.adsk-viewing-viewer .toolbar-container,
+.adsk-viewing-viewer .navigation-controls {
+    /* Default behavior for desktop and tablets */
+    overflow: visible !important;
+    white-space: normal !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+}
+
 /* Mobile-first responsive design */
 @media (max-width: 480px) {
     /* Extra small phones - Full screen experience */
@@ -221,6 +236,79 @@ body, html {
         position: fixed;
         width: 100%;
     }
+    
+    /* Enhanced mobile toolbar scrolling - ONLY for phones - Main container only */
+    .adsk-viewing-viewer .adsk-toolbar,
+    .adsk-viewing-viewer .toolbar {
+        max-width: calc(100vw - 20px) !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: thin !important; /* Show thin scrollbar on Firefox */
+        scrollbar-color: rgba(0,0,0,0.3) transparent !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        position: relative !important;
+    }
+    
+    /* Show subtle scrollbar for webkit browsers - Mobile only - Main container only */
+    .adsk-viewing-viewer .toolbar::-webkit-scrollbar,
+    .adsk-viewing-viewer .adsk-toolbar::-webkit-scrollbar {
+        height: 4px !important;
+        width: 4px !important;
+    }
+    
+    .adsk-viewing-viewer .toolbar::-webkit-scrollbar-track,
+    .adsk-viewing-viewer .adsk-toolbar::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.1) !important;
+        border-radius: 2px !important;
+    }
+    
+    .adsk-viewing-viewer .toolbar::-webkit-scrollbar-thumb,
+    .adsk-viewing-viewer .adsk-toolbar::-webkit-scrollbar-thumb {
+        background: rgba(0,0,0,0.4) !important;
+        border-radius: 2px !important;
+    }
+    
+    /* Preserve control group structure and button grouping */
+    .adsk-viewing-viewer .adsk-control-group {
+        flex-shrink: 0 !important;
+        display: inline-flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        margin: 0 2px !important;
+        white-space: nowrap !important;
+    }
+    
+    /* Ensure toolbar groups are aligned horizontally */
+    .adsk-viewing-viewer .adsk-toolbar {
+        align-items: center !important;
+        justify-content: flex-start !important;
+    }
+    
+    /* Prevent button wrapping within groups */
+    .adsk-viewing-viewer .adsk-control-group .adsk-button {
+        flex-shrink: 0 !important;
+    }
+    
+    /* Add scroll indicators - Only on main toolbar */
+    .adsk-viewing-viewer .adsk-toolbar::after {
+        content: '→' !important;
+        position: absolute !important;
+        right: 5px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        background: rgba(0,0,0,0.6) !important;
+        color: white !important;
+        padding: 2px 4px !important;
+        border-radius: 3px !important;
+        font-size: 10px !important;
+        pointer-events: none !important;
+        opacity: 0.7 !important;
+        z-index: 10 !important;
+    }
+    
+    /* Remove duplicate button styles - let original styles apply */
     
     #header {
         position: fixed;
@@ -291,10 +379,24 @@ body, html {
         top: 120px; /* Account for compact header */
         left: 0;
         right: 0;
-        bottom: 80px; /* Leave space for viewer toolbar */
-        height: calc(100vh - 200px); /* Account for header and toolbar space */
+        bottom: 0; /* Full height */
+        height: calc(100vh - 120px); /* Account for header only */
         width: 100vw;
         background: #f8f9fa;
+    }
+    
+    /* Ensure Autodesk Viewer toolbar is positioned correctly */
+    .adsk-viewing-viewer .adsk-toolbar {
+        position: fixed !important;
+        bottom: 10px !important;
+        left: 10px !important;
+        right: 10px !important;
+        z-index: 1000 !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px) !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+        padding: 8px !important;
     }
     
     #overlay {
@@ -332,7 +434,39 @@ body, html {
     /* Tablets and larger phones */
     body, html {
         height: 100vh;
-        overflow-x: hidden;
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+    }
+    
+    /* Tablet toolbar styling - NO horizontal scrolling */
+    .adsk-viewing-viewer .adsk-control-group,
+    .adsk-viewing-viewer .toolbar,
+    .adsk-viewing-viewer .adsk-toolbar,
+    .adsk-viewing-viewer .adsk-toolbar-vertical,
+    .adsk-viewing-viewer .adsk-toolbar-horizontal,
+    .adsk-viewing-viewer .toolbar-container,
+    .adsk-viewing-viewer .navigation-controls {
+        max-width: 100vw !important;
+        overflow: visible !important;
+        padding: 8px !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px) !important;
+        border-radius: 10px !important;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.1) !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+    }
+    
+    /* Tablet toolbar button optimization */
+    .adsk-viewing-viewer .adsk-control-group .adsk-button,
+    .adsk-viewing-viewer .toolbar .adsk-button,
+    .adsk-viewing-viewer .adsk-toolbar .adsk-button {
+        min-width: 48px !important;
+        min-height: 48px !important;
+        margin: 3px !important;
+        border-radius: 8px !important;
+        touch-action: manipulation !important;
     }
     
     #header {
