@@ -291,8 +291,8 @@ body, html {
         top: 120px; /* Account for compact header */
         left: 0;
         right: 0;
-        bottom: 0;
-        height: calc(100vh - 120px);
+        bottom: 80px; /* Leave space for viewer toolbar */
+        height: calc(100vh - 200px); /* Account for header and toolbar space */
         width: 100vw;
         background: #f8f9fa;
     }
@@ -401,8 +401,8 @@ body, html {
         top: 140px;
         left: 0;
         right: 0;
-        bottom: 0;
-        height: calc(100vh - 140px);
+        bottom: 90px; /* Leave space for viewer toolbar */
+        height: calc(100vh - 230px); /* Account for header and toolbar space */
         width: 100vw;
         background: #f8f9fa;
     }
