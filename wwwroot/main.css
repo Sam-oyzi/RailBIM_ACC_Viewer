@@ -1,0 +1,250 @@
+/* Reset and base styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Layout containers */
+#header, #preview, #overlay {
+    position: absolute;
+    width: 100%;
+}
+
+#header {
+    height: 4em;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 100;
+    padding: 0 1em;
+}
+
+#preview {
+    top: 4em;
+    bottom: 0;
+    background-color: #e8e8e8;
+}
+
+#overlay {
+    top: 4em;
+    bottom: 0;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 2em;
+    display: none;
+    backdrop-filter: blur(5px);
+}
+
+/* Header elements */
+.logo {
+    height: 2.5em;
+    filter: brightness(0) invert(1);
+}
+
+.title {
+    flex: 1 0 auto;
+    height: auto;
+    font-size: 1.5em;
+    font-weight: 600;
+    color: white;
+    margin-left: 1em;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Form controls */
+#models {
+    flex: 0 1 auto;
+    min-width: 200px;
+    height: 2.5em;
+    padding: 0.5em;
+    border: none;
+    border-radius: 6px;
+    background: white;
+    font-size: 0.9em;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+#models:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+}
+
+#models:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#upload {
+    height: 2.5em;
+    padding: 0 1.5em;
+    margin-left: 1em;
+    border: none;
+    border-radius: 6px;
+    background: #4CAF50;
+    color: white;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#upload:hover:not(:disabled) {
+    background: #45a049;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+#upload:active {
+    transform: translateY(0);
+}
+
+#upload:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Notification styles */
+#overlay > .notification {
+    margin: auto;
+    padding: 2em;
+    max-width: 600px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    text-align: center;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.notification h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.notification ul {
+    text-align: left;
+    margin: 1em 0;
+}
+
+.notification li {
+    margin: 0.5em 0;
+    padding: 0.5em;
+    background: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #dc3545;
+}
+
+/* Loading spinner */
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Progress bar */
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 1em 0;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #45a049);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #header {
+        flex-direction: column;
+        height: auto;
+        padding: 1em;
+    }
+    
+    .title {
+        margin: 0.5em 0;
+        text-align: center;
+    }
+    
+    #models, #upload {
+        width: 100%;
+        margin: 0.25em 0;
+    }
+    
+    #preview {
+        top: auto;
+        position: relative;
+        height: 60vh;
+    }
+    
+    #overlay {
+        top: 0;
+        padding: 1em;
+    }
+    
+    #overlay > .notification {
+        max-width: 90%;
+        padding: 1.5em;
+    }
+}
+
+/* Status indicators */
+.status-success {
+    color: #4CAF50;
+    font-weight: 500;
+}
+
+.status-error {
+    color: #f44336;
+    font-weight: 500;
+}
+
+.status-warning {
+    color: #ff9800;
+    font-weight: 500;
+}
+
+.status-info {
+    color: #2196F3;
+    font-weight: 500;
+}

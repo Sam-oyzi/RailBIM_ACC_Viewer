@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Autodesk Viewer</title>
+    <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.css">
+    <style>
+        #viewer {
+            position: absolute;
+            inset: 0;
+        }
+        
+        #models {
+            position: absolute;
+            left: 1em;
+            top: 1em;
+            z-index: 1;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background: white;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div style="padding: 20px;">
+        <h2>Autodesk Viewer - File Upload</h2>
+        <div style="margin-bottom: 20px;">
+            <input type="file" id="fileInput" accept=".rvt,.dwg,.ifc,.nwd,.3ds,.fbx,.obj,.step,.iges" style="margin-right: 10px;">
+            <button id="uploadBtn" onclick="uploadFile()">Upload & View Model</button>
+        </div>
+        <div id="status" style="margin-bottom: 10px; color: #666;"></div>
+    </div>
+    <div id="viewerContainer" style="width: 100%; height: 600px;"></div>
+    
+    <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.js"></script>
+    <script type="module">
+        import { initViewer, getAccessToken, uploadAndTranslate, loadModel, createSimpleGeometry } from './utils.js';
+        
+        let viewer = null;
+        let accessToken = null;
+        
+        // Initialize viewer
+        async function init() {
+            try {
+                // Get access token using callback
+                getAccessToken(async (token, expiresIn) => {
+                    accessToken = token;
+                    console.log('Access token obtained');
+                    
+                    viewer = await initViewer('viewerContainer', accessToken);
+                    console.log('Viewer initialized');
+                    
+                    // Show a simple 3D cube by default
+                    createSimpleGeometry(viewer);
+                    
+                    document.getElementById('status').textContent = 'Viewer ready. Select a file to upload.';
+                });
+                
+            } catch (error) {
+                console.error('Error during initialization:', error);
+                document.getElementById('status').textContent = 'Error initializing viewer: ' + error.message;
+            }
+        }
+        
+        // Upload and process file
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const statusDiv = document.getElementById('status');
+            
+            if (!fileInput.files[0]) {
+                statusDiv.textContent = 'Please select a file first.';
+                return;
+            }
+            
+            if (!viewer || !accessToken) {
+                statusDiv.textContent = 'Viewer not ready. Please wait.';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            statusDiv.textContent = `Uploading ${file.name}...`;
+            
+            try {
+                // Upload file and get URN
+                const urn = await uploadAndTranslate(file, accessToken);
+                statusDiv.textContent = 'File uploaded. Processing model...';
+                
+                // Load the model in viewer
+                await loadModel(viewer, urn);
+                statusDiv.textContent = `Model loaded successfully: ${file.name}`;
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                statusDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        // Start initialization when page loads
+        init();
+    </script>
+</body>
+</html>
