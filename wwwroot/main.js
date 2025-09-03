@@ -257,3 +257,80 @@ function extractProgressPercent(progressText) {
     const match = progressText.match(/(\d+)%/);
     return match ? parseInt(match[1]) : null;
 }
+
+// Mobile toolbar touch scrolling enhancement
+function initMobileToolbarScrolling() {
+    // Wait for Autodesk Viewer to load and create toolbar
+    const checkToolbar = () => {
+        const toolbars = document.querySelectorAll('.adsk-viewing-viewer .adsk-toolbar, .adsk-viewing-viewer .toolbar');
+        if (toolbars.length > 0) {
+            toolbars.forEach(toolbar => {
+                if (!toolbar.dataset.touchScrollInit) {
+                    setupTouchScrolling(toolbar);
+                    toolbar.dataset.touchScrollInit = 'true';
+                }
+            });
+        } else {
+            // Retry after 500ms if toolbar not found
+            setTimeout(checkToolbar, 500);
+        }
+    };
+    
+    // Start checking after a short delay
+    setTimeout(checkToolbar, 1000);
+}
+
+function setupTouchScrolling(toolbar) {
+    let isScrolling = false;
+    let startX = 0;
+    let scrollLeft = 0;
+    
+    // Touch start
+    toolbar.addEventListener('touchstart', (e) => {
+        isScrolling = true;
+        startX = e.touches[0].pageX - toolbar.offsetLeft;
+        scrollLeft = toolbar.scrollLeft;
+        toolbar.style.cursor = 'grabbing';
+    }, { passive: true });
+    
+    // Touch move
+    toolbar.addEventListener('touchmove', (e) => {
+        if (!isScrolling) return;
+        e.preventDefault();
+        const x = e.touches[0].pageX - toolbar.offsetLeft;
+        const walk = (x - startX) * 2; // Scroll speed multiplier
+        toolbar.scrollLeft = scrollLeft - walk;
+    }, { passive: false });
+    
+    // Touch end
+    toolbar.addEventListener('touchend', () => {
+        isScrolling = false;
+        toolbar.style.cursor = 'grab';
+    }, { passive: true });
+    
+    // Prevent button clicks during scrolling
+    toolbar.addEventListener('touchstart', (e) => {
+        const buttons = toolbar.querySelectorAll('.adsk-button');
+        buttons.forEach(button => {
+            button.dataset.touchStartTime = Date.now();
+        });
+    }, { passive: true });
+    
+    toolbar.addEventListener('touchend', (e) => {
+        const buttons = toolbar.querySelectorAll('.adsk-button');
+        buttons.forEach(button => {
+            const touchDuration = Date.now() - (button.dataset.touchStartTime || 0);
+            if (touchDuration > 150) { // If touch lasted more than 150ms, likely a scroll
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+    }, { passive: false });
+}
+
+// Initialize mobile scrolling when page loads
+if (window.innerWidth <= 480) {
+    document.addEventListener('DOMContentLoaded', initMobileToolbarScrolling);
+    // Also try after window load in case DOM is already ready
+    window.addEventListener('load', initMobileToolbarScrolling);
+}
