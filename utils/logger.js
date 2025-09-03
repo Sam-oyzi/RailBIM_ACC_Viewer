@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-// Ensure logs directory exists
+// Ensure logs directory exists (only in non-production environments)
 const logsDir = path.join(__dirname, '..', 'logs');
-if (!fs.existsSync(logsDir)) {
+if (process.env.NODE_ENV !== 'production' && !fs.existsSync(logsDir)) {
     fs.mkdirSync(logsDir, { recursive: true });
 }
 
@@ -18,7 +18,8 @@ const LOG_LEVELS = {
 class Logger {
     constructor() {
         this.level = process.env.LOG_LEVEL || 'INFO';
-        this.logToFile = process.env.LOG_TO_FILE !== 'false';
+        // Disable file logging in production (Vercel)
+        this.logToFile = process.env.NODE_ENV !== 'production' && process.env.LOG_TO_FILE !== 'false';
         this.logToConsole = process.env.LOG_TO_CONSOLE !== 'false';
         
         // Create log file paths
@@ -38,8 +39,13 @@ class Logger {
     }
 
     writeToFile(logFile, formattedMessage) {
-        if (this.logToFile) {
-            fs.appendFileSync(logFile, formattedMessage + '\n');
+        if (this.logToFile && process.env.NODE_ENV !== 'production') {
+            try {
+                fs.appendFileSync(logFile, formattedMessage + '\n');
+            } catch (err) {
+                // Fallback to console if file writing fails
+                console.error('Failed to write to log file:', err.message);
+            }
         }
     }
 

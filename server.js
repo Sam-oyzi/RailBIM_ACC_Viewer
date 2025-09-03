@@ -26,27 +26,32 @@ app.use('/api/*', (req, res) => {
     res.status(404).json({ error: { message: 'API endpoint not found' } });
 });
 
-// Start server
-const server = app.listen(PORT, function () { 
-    logger.info(`Server started successfully`, { port: PORT, env: process.env.NODE_ENV || 'development' });
-});
-
-// Graceful shutdown
-process.on('SIGINT', () => {
-    logger.info('Received SIGINT signal, shutting down gracefully...');
-    server.close(() => {
-        logger.info('Server closed successfully');
-        process.exit(0);
+// Start server (for local development)
+if (process.env.NODE_ENV !== 'production') {
+    const server = app.listen(PORT, function () { 
+        logger.info(`Server started successfully`, { port: PORT, env: process.env.NODE_ENV || 'development' });
     });
-});
 
-process.on('SIGTERM', () => {
-    logger.info('Received SIGTERM signal, shutting down gracefully...');
-    server.close(() => {
-        logger.info('Server closed successfully');
-        process.exit(0);
+    // Graceful shutdown
+    process.on('SIGINT', () => {
+        logger.info('Received SIGINT signal, shutting down gracefully...');
+        server.close(() => {
+            logger.info('Server closed successfully');
+            process.exit(0);
+        });
     });
-});
+
+    process.on('SIGTERM', () => {
+        logger.info('Received SIGTERM signal, shutting down gracefully...');
+        server.close(() => {
+            logger.info('Server closed successfully');
+            process.exit(0);
+        });
+    });
+}
+
+// Export the Express app for Vercel
+module.exports = app;
 
 process.on('uncaughtException', (err) => {
     logger.error('Uncaught Exception', { message: err.message, stack: err.stack });
