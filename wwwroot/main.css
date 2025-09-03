@@ -6,10 +6,29 @@ body, html {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f5f5f5;
     color: #333;
+    /* Prevent horizontal scrolling on mobile */
+    overflow-x: hidden;
+    /* Improve text rendering on mobile */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
 }
 
 * {
     box-sizing: border-box;
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+    /* Mobile touch devices */
+    button, select, input[type="file"] {
+        min-height: 44px; /* Apple's recommended minimum touch target */
+        min-width: 44px;
+    }
+    
+    /* Improve button touch feedback */
+    button:active {
+        background-color: rgba(0,0,0,0.1);
+    }
 }
 
 /* Layout containers */
@@ -193,28 +212,110 @@ body, html {
     transition: width 0.3s ease;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
+/* Mobile-first responsive design */
+@media (max-width: 480px) {
+    /* Extra small phones */
     #header {
         flex-direction: column;
         height: auto;
-        padding: 1em;
+        padding: 0.75em;
+        gap: 0.5em;
+    }
+    
+    .logo {
+        height: 2em;
     }
     
     .title {
-        margin: 0.5em 0;
+        font-size: 1.2em;
+        margin: 0;
         text-align: center;
+        order: -1;
     }
     
-    #models, #upload {
+    #models {
         width: 100%;
-        margin: 0.25em 0;
+        min-width: unset;
+        margin: 0;
+        font-size: 0.85em;
+        height: 2.2em;
+    }
+    
+    #upload {
+        width: 100%;
+        margin: 0;
+        padding: 0 1em;
+        font-size: 0.85em;
+        height: 2.2em;
     }
     
     #preview {
         top: auto;
         position: relative;
-        height: 60vh;
+        height: 50vh;
+        min-height: 300px;
+    }
+    
+    #overlay {
+        top: 0;
+        padding: 0.5em;
+    }
+    
+    #overlay > .notification {
+        max-width: 95%;
+        padding: 1em;
+        margin: 1em auto;
+    }
+    
+    .notification h3 {
+        font-size: 1.1em;
+    }
+    
+    .notification {
+        font-size: 0.9em;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    /* Tablets and larger phones */
+    #header {
+        flex-direction: column;
+        height: auto;
+        padding: 1em;
+        gap: 0.75em;
+    }
+    
+    .title {
+        margin: 0;
+        text-align: center;
+        font-size: 1.4em;
+    }
+    
+    .header-controls {
+        display: flex;
+        gap: 1em;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    #models {
+        flex: 1;
+        min-width: unset;
+        margin: 0;
+    }
+    
+    #upload {
+        flex: 0 0 auto;
+        margin: 0;
+        white-space: nowrap;
+    }
+    
+    #preview {
+        top: auto;
+        position: relative;
+        height: 65vh;
+        min-height: 400px;
     }
     
     #overlay {
@@ -225,6 +326,15 @@ body, html {
     #overlay > .notification {
         max-width: 90%;
         padding: 1.5em;
+    }
+}
+
+@media (min-width: 769px) {
+    /* Desktop styles - keep existing layout */
+    .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 1em;
     }
 }
 
